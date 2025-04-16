@@ -28,6 +28,7 @@ resource "proxmox_vm_qemu" "k3s-support" {
 
   disk {
     type    = local.support_node_settings.storage_type
+    slot    = "${local.support_node_settings.storage_type}0"
     storage = local.support_node_settings.storage_id
     size    = local.support_node_settings.disk_size
   }
@@ -77,7 +78,7 @@ resource "proxmox_vm_qemu" "k3s-support" {
       k3s_database = local.support_node_settings.db_name
       k3s_user     = local.support_node_settings.db_user
       k3s_password = random_password.k3s-master-db-password.result
-      
+
       http_proxy  = var.http_proxy
     })
   }

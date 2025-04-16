@@ -59,6 +59,7 @@ resource "proxmox_vm_qemu" "k3s-worker" {
 
   disk {
     type    = each.value.storage_type
+    slot    = "${each.value.storage_type}0"
     storage = each.value.storage_id
     size    = each.value.disk_size
   }
