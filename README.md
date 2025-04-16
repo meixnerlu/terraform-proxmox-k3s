@@ -25,7 +25,7 @@ A module for spinning up an expandable and flexible K3s server for your HomeLab.
 
 ```terraform
 module "k3s" {
-  source  = "fvumbaca/k3s/proxmox"
+  source  = "meixnerlu/k3s/proxmox"
   version = ">= 0.0.0, < 1.0.0" # Get latest 0.X release
 
   authorized_keys_file = "authorized_keys"

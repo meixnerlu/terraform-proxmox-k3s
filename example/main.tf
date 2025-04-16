@@ -2,7 +2,7 @@ terraform {
   required_providers {
     proxmox = {
       source = "Telmate/proxmox"
-      version = "2.9.3"
+      version = "3.0.1-rc8"
     }
 
     macaddress = {
@@ -67,4 +67,3 @@ output "kubeconfig" {
   value = module.k3s.k3s_kubeconfig
   sensitive = true
 }
-
