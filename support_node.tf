@@ -28,7 +28,7 @@ resource "proxmox_vm_qemu" "k3s-support" {
 
   disk {
     type    = local.support_node_settings.storage_type
-    slot    = "${local.support_node_settings.storage_type}0"
+    slot    = local.support_node_settings.storage_slot
     storage = local.support_node_settings.storage_id
     size    = local.support_node_settings.disk_size
   }
