@@ -65,6 +65,13 @@ resource "proxmox_vm_qemu" "k3s-worker" {
     size    = each.value.disk_size
   }
 
+  disk {
+    type    = "cloudinit"
+    storage = each.value.storage_id
+    slot    = "ide2"
+  }
+
+
   network {
     id        = 0
     bridge    = each.value.network_bridge

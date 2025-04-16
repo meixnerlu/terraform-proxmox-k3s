@@ -33,6 +33,13 @@ resource "proxmox_vm_qemu" "k3s-support" {
     size    = local.support_node_settings.disk_size
   }
 
+  disk {
+    type    = "cloudinit"
+    storage = local.support_node_settings.storage_id
+    slot    = "ide2"
+  }
+
+
   network {
     id        = 0
     bridge    = local.support_node_settings.network_bridge

@@ -41,6 +41,12 @@ resource "proxmox_vm_qemu" "k3s-master" {
     size    = local.master_node_settings.disk_size
   }
 
+  disk {
+    type    = "cloudinit"
+    storage = local.master_node_settings.storage_id
+    slot    = "ide2"
+  }
+
   network {
     id        = 0
     bridge    = local.master_node_settings.network_bridge
@@ -54,7 +60,7 @@ resource "proxmox_vm_qemu" "k3s-master" {
   }
 
   lifecycle {
-    ignore_changes       = [
+    ignore_changes = [
       ciuser,
       sshkeys,
       disk,
