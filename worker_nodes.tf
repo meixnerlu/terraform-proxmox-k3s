@@ -16,6 +16,7 @@ locals {
         memory         = pool.memory
         storage_type   = pool.storage_type
         storage_id     = pool.storage_id
+        storage_slot   = pool.storage_slot
         disk_size      = pool.disk_size
         user           = pool.user
         template       = coalesce(pool.template, var.node_template)
