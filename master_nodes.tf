@@ -42,6 +42,7 @@ resource "proxmox_vm_qemu" "k3s-master" {
   }
 
   network {
+    id        = 0
     bridge    = local.master_node_settings.network_bridge
     firewall  = true
     link_down = false

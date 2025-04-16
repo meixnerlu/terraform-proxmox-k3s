@@ -1,5 +1,7 @@
 # terraform-proxmox-k3s
 
+IGNORE THE 0.1.* VERSIONS!!!
+
 A module for spinning up an expandable and flexible K3s server for your HomeLab.
 
 ## Features
@@ -21,7 +23,7 @@ A module for spinning up an expandable and flexible K3s server for your HomeLab.
 ## Usage
 
 > Take a look at the complete auto-generated docs on the
-[Official Registry Page](https://registry.terraform.io/modules/fvumbaca/k3s/proxmox/latest).
+[Official Registry Page](https://search.opentofu.org/module/meixnerlu/k3s/proxmox/latest).
 
 ```terraform
 module "k3s" {

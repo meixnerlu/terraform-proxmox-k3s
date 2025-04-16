@@ -65,6 +65,7 @@ resource "proxmox_vm_qemu" "k3s-worker" {
   }
 
   network {
+    id        = 0
     bridge    = each.value.network_bridge
     firewall  = true
     link_down = false

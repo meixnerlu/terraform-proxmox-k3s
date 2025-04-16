@@ -34,6 +34,7 @@ resource "proxmox_vm_qemu" "k3s-support" {
   }
 
   network {
+    id        = 0
     bridge    = local.support_node_settings.network_bridge
     firewall  = true
     link_down = false
