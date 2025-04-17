@@ -108,15 +108,37 @@ resource "proxmox_vm_qemu" "k3s-master" {
   }
 }
 
+resource "null_resource" "write_key" {
+  provisioner "local-exec" {
+    command = <<EOT
+      echo '${var.private_key}' > /tmp/k3s_ssh_key
+      chmod 600 /tmp/k3s_ssh_key
+      EOT
+  }
+
+  triggers = {
+    key = var.private_key
+  }
+}
+
+resource "null_resource" "delete_ssh_key" {
+  provisioner "local-exec" {
+    command = "shred -u /tmp/k3s_ssh_key"
+  }
+  
+  depends_on = [data.external.kubeconfig]
+}
+
 data "external" "kubeconfig" {
   depends_on = [
     proxmox_vm_qemu.k3s-support,
-    proxmox_vm_qemu.k3s-master
+    proxmox_vm_qemu.k3s-master,
+    null_resource.write_key
   ]
 
   program = [
     "/usr/bin/ssh",
-    "-i", "${var.private_key}",
+    "-i", "/tmp/k3s_ssh_key",
     "-o", "UserKnownHostsFile=/dev/null",
     "-o", "StrictHostKeyChecking=no",
     "${local.master_node_settings.user}@${local.master_node_ips[0]}",
