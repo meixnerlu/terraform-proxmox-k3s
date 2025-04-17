@@ -119,6 +119,7 @@ data "external" "kubeconfig" {
     "-i", "${var.private_key}",
     "-o", "UserKnownHostsFile=/dev/null",
     "-o", "StrictHostKeyChecking=no",
+    "-o", "StrictModes=no",
     "${local.master_node_settings.user}@${local.master_node_ips[0]}",
     "sudo cat /etc/rancher/k3s/k3s.yaml | base64 | jq -Rs '{kubeconfig: .}'"
   ]
