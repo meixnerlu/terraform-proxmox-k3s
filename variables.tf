@@ -86,6 +86,7 @@ variable "support_node_settings" {
     db_user        = optional(string, "k3s"),
     network_bridge = optional(string, "vmbr0"),
     network_tag    = optional(number, 0),
+    display_type    = optional(string, "serial0"),
   })
 }
 
@@ -107,6 +108,7 @@ variable "master_node_settings" {
     user           = optional(string, "k3s"),
     network_bridge = optional(string, "vmbr0"),
     network_tag    = optional(number, 0),
+    display_type    = optional(string, "serial0"),
   })
 }
 
@@ -129,6 +131,7 @@ variable "node_pools" {
     disk_size    = optional(string, "20G"),
     user         = optional(string, "k3s"),
     network_tag  = optional(number, 0),
+    display_type = optional(string, "serial0"),
 
     template = optional(string),
 

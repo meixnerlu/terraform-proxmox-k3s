@@ -26,7 +26,6 @@ resource "proxmox_vm_qemu" "k3s-master" {
 
   pool = var.proxmox_resource_pool
 
-  # cores = 2
   cores   = local.master_node_settings.cores
   sockets = local.master_node_settings.sockets
   memory  = local.master_node_settings.memory
@@ -57,6 +56,10 @@ resource "proxmox_vm_qemu" "k3s-master" {
     queues    = 0
     rate      = 0
     tag       = local.master_node_settings.network_tag
+  }
+
+  vga {
+    type = local.master_node_settings.display_type
   }
 
   lifecycle {

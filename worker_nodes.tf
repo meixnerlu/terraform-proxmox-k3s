@@ -22,6 +22,7 @@ locals {
         template       = coalesce(pool.template, var.node_template)
         network_bridge = pool.network_bridge
         network_tag    = pool.network_tag
+        display_type   = pool.display_type
         i              = i
         }, {
         i  = i
@@ -51,7 +52,6 @@ resource "proxmox_vm_qemu" "k3s-worker" {
 
   pool = var.proxmox_resource_pool
 
-  # cores = 2
   cores   = each.value.cores
   sockets = each.value.sockets
   memory  = each.value.memory
@@ -83,6 +83,10 @@ resource "proxmox_vm_qemu" "k3s-worker" {
     queues    = 0
     rate      = 0
     tag       = each.value.network_tag
+  }
+
+  vga {
+    type = each.value.display_type
   }
 
   lifecycle {

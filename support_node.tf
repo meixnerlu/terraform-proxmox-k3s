@@ -18,7 +18,6 @@ resource "proxmox_vm_qemu" "k3s-support" {
 
   pool = var.proxmox_resource_pool
 
-  # cores = 2
   cores   = local.support_node_settings.cores
   sockets = local.support_node_settings.sockets
   memory  = local.support_node_settings.memory
@@ -50,6 +49,10 @@ resource "proxmox_vm_qemu" "k3s-support" {
     queues    = 0
     rate      = 0
     tag       = local.support_node_settings.network_tag
+  }
+
+  vga {
+    type = local.support_node_settings.display_type
   }
 
   lifecycle {
