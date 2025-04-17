@@ -85,7 +85,7 @@ variable "support_node_settings" {
     db_name        = optional(string, "k3s"),
     db_user        = optional(string, "k3s"),
     network_bridge = optional(string, "vmbr0"),
-    network_tag    = optional(number, -1),
+    network_tag    = optional(number, 0),
   })
 }
 
@@ -106,7 +106,7 @@ variable "master_node_settings" {
     disk_size      = optional(string, "20G"),
     user           = optional(string, "k3s"),
     network_bridge = optional(string, "vmbr0"),
-    network_tag    = optional(number, -1),
+    network_tag    = optional(number, 0),
   })
 }
 
@@ -128,7 +128,7 @@ variable "node_pools" {
     storage_slot = optional(string, "scsi0"),
     disk_size    = optional(string, "20G"),
     user         = optional(string, "k3s"),
-    network_tag  = optional(number, -1),
+    network_tag  = optional(number, 0),
 
     template = optional(string),
 
