@@ -37,7 +37,7 @@ provider "proxmox" {
 
 module "k3s" {
   source  = "meixnerlu/k3s/proxmox"
-  version = "v0.2.1"
+  version = "v0.2.2"
 
   authorized_keys_file = "path to a pub key"
   private_key = "path to a priv key" # of course they need to be a pair
