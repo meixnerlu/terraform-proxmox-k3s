@@ -11,7 +11,7 @@ locals {
 }
 
 resource "proxmox_vm_qemu" "k3s-support" {
-  target_node = var.proxmox_node
+  target_node = var.proxmox_node[0]
   name        = join("-", [var.cluster_name, "support"])
 
   clone = var.node_template

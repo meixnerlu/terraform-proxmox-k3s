@@ -19,7 +19,7 @@ resource "proxmox_vm_qemu" "k3s-master" {
   ]
 
   count       = var.master_nodes_count
-  target_node = var.proxmox_node
+  target_node = var.proxmox_node[count.index % length(var.proxmox_node)]
   name        = "${var.cluster_name}-master-${count.index}"
 
   clone = var.node_template

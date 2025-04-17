@@ -37,12 +37,13 @@ provider "proxmox" {
 
 module "k3s" {
   source  = "meixnerlu/k3s/proxmox"
-  version = "v0.2.X"
+  version = "v0.2.1"
 
   authorized_keys_file = "path to a pub key"
   private_key = "path to a priv key" # of course they need to be a pair
 
-  proxmox_node = "your proxmox node"
+  proxmox_node = ["your proxmox node"]
+  # proxmox_node = ["node1", "node2", "node3"] for clusters
 
   node_template = "debian-12-template" # I used a debian12 cloud image with qemu-guest-agent and nfs-common installed
   proxmox_resource_pool = "k3s"

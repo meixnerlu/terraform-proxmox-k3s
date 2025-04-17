@@ -1,6 +1,6 @@
 variable "proxmox_node" {
-  description = "Proxmox node to create VMs on."
-  type        = string
+  description = "The Proxmox nodes to create VMs on."
+  type        = list(string)
 }
 
 variable "authorized_keys_file" {
