@@ -16,9 +16,6 @@
       ]
     }
   },
-  "mounts": [
-    "source=${localWorkspaceFolder}/.terraform.d,target=/root/.terraform.d,type=bind"
-  ],
   "postCreateCommand": "terraform --version",
   "remoteUser": "root"
 }
