@@ -1,18 +1,10 @@
 {
   "name": "Terraform Dev Container",
   "image": "hashicorp/terraform:latest",
-  "features": {
-    "ghcr.io/devcontainers/features/github-cli:1": {},
-    "ghcr.io/devcontainers/features/aws-cli:1": {},
-    "ghcr.io/devcontainers/features/azure-cli:1": {},
-    "ghcr.io/devcontainers/features/google-cloud-cli:1": {}
-  },
   "customizations": {
     "vscode": {
       "extensions": [
-        "hashicorp.terraform",
-        "eamodio.gitlens",
-        "ms-azuretools.vscode-docker"
+        "hashicorp.terraform"
       ]
     }
   },
