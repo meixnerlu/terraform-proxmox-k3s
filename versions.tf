@@ -10,6 +10,11 @@ terraform {
       source  = "ivoronin/macaddress"
       version = "0.3.0"
     }
+
+    remote = {
+      source  = "tenstad/remote"
+      version = "0.1.3"
+    }
   }
 }
 
