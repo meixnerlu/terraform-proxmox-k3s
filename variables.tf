@@ -1,6 +1,6 @@
 variable "proxmox_node" {
-  description = "Proxmox node to create VMs on."
-  type        = string
+  description = "The Proxmox nodes to create VMs on."
+  type        = list(string)
 }
 
 variable "authorized_keys_file" {
@@ -77,14 +77,16 @@ variable "support_node_settings" {
     cores          = optional(number, 2),
     sockets        = optional(number, 1),
     memory         = optional(number, 4096),
-    storage_type   = optional(string, "scsi"),
+    storage_type   = optional(string, "disk"),
     storage_id     = optional(string, "local-lvm"),
+    storage_slot   = optional(string, "scsi0"),
     disk_size      = optional(string, "20G"),
     user           = optional(string, "k3s"),
     db_name        = optional(string, "k3s"),
     db_user        = optional(string, "k3s"),
     network_bridge = optional(string, "vmbr0"),
-    network_tag    = optional(number, -1),
+    network_tag    = optional(number, 0),
+    display_type    = optional(string, "serial0"),
   })
 }
 
@@ -99,12 +101,14 @@ variable "master_node_settings" {
     cores          = optional(number, 2),
     sockets        = optional(number, 1),
     memory         = optional(number, 4096),
-    storage_type   = optional(string, "scsi"),
+    storage_type   = optional(string, "disk"),
     storage_id     = optional(string, "local-lvm"),
+    storage_slot   = optional(string, "scsi0"),
     disk_size      = optional(string, "20G"),
     user           = optional(string, "k3s"),
     network_bridge = optional(string, "vmbr0"),
-    network_tag    = optional(number, -1),
+    network_tag    = optional(number, 0),
+    display_type    = optional(string, "serial0"),
   })
 }
 
@@ -121,11 +125,13 @@ variable "node_pools" {
     cores        = optional(number, 2),
     sockets      = optional(number, 1),
     memory       = optional(number, 4096),
-    storage_type = optional(string, "scsi"),
+    storage_type = optional(string, "disk"),
     storage_id   = optional(string, "local-lvm"),
+    storage_slot = optional(string, "scsi0"),
     disk_size    = optional(string, "20G"),
     user         = optional(string, "k3s"),
-    network_tag  = optional(number, -1),
+    network_tag  = optional(number, 0),
+    display_type = optional(string, "serial0"),
 
     template = optional(string),
 

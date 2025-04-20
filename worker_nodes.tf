@@ -16,11 +16,14 @@ locals {
         memory         = pool.memory
         storage_type   = pool.storage_type
         storage_id     = pool.storage_id
+        storage_slot   = pool.storage_slot
         disk_size      = pool.disk_size
         user           = pool.user
         template       = coalesce(pool.template, var.node_template)
         network_bridge = pool.network_bridge
         network_tag    = pool.network_tag
+        display_type   = pool.display_type
+        i              = i
         }, {
         i  = i
         ip = cidrhost(pool.subnet, i)
@@ -42,14 +45,13 @@ resource "proxmox_vm_qemu" "k3s-worker" {
 
   for_each = local.mapped_worker_nodes
 
-  target_node = var.proxmox_node
+  target_node = var.proxmox_node[each.value.i % length(var.proxmox_node)]
   name        = "${var.cluster_name}-${each.key}"
 
   clone = each.value.template
 
   pool = var.proxmox_resource_pool
 
-  # cores = 2
   cores   = each.value.cores
   sockets = each.value.sockets
   memory  = each.value.memory
@@ -59,10 +61,17 @@ resource "proxmox_vm_qemu" "k3s-worker" {
 
   disk {
     type    = each.value.storage_type
-    slot    = "${each.value.storage_type}0"
+    slot    = each.value.storage_slot
     storage = each.value.storage_id
     size    = each.value.disk_size
   }
+
+  disk {
+    type    = "cloudinit"
+    storage = each.value.storage_id
+    slot    = "ide2"
+  }
+
 
   network {
     id        = 0
@@ -76,12 +85,18 @@ resource "proxmox_vm_qemu" "k3s-worker" {
     tag       = each.value.network_tag
   }
 
+  vga {
+    type = each.value.display_type
+  }
+
   lifecycle {
     ignore_changes = [
       ciuser,
       sshkeys,
       disk,
-      network
+      network,
+      hagroup,
+      hastate
     ]
   }
 

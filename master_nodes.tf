@@ -19,14 +19,13 @@ resource "proxmox_vm_qemu" "k3s-master" {
   ]
 
   count       = var.master_nodes_count
-  target_node = var.proxmox_node
+  target_node = var.proxmox_node[count.index % length(var.proxmox_node)]
   name        = "${var.cluster_name}-master-${count.index}"
 
   clone = var.node_template
 
   pool = var.proxmox_resource_pool
 
-  # cores = 2
   cores   = local.master_node_settings.cores
   sockets = local.master_node_settings.sockets
   memory  = local.master_node_settings.memory
@@ -36,9 +35,15 @@ resource "proxmox_vm_qemu" "k3s-master" {
 
   disk {
     type    = local.master_node_settings.storage_type
-    slot    = "${local.master_node_settings.storage_type}0"
+    slot    = local.master_node_settings.storage_slot
     storage = local.master_node_settings.storage_id
     size    = local.master_node_settings.disk_size
+  }
+
+  disk {
+    type    = "cloudinit"
+    storage = local.master_node_settings.storage_id
+    slot    = "ide2"
   }
 
   network {
@@ -53,12 +58,18 @@ resource "proxmox_vm_qemu" "k3s-master" {
     tag       = local.master_node_settings.network_tag
   }
 
+  vga {
+    type = local.master_node_settings.display_type
+  }
+
   lifecycle {
-    ignore_changes       = [
+    ignore_changes = [
       ciuser,
       sshkeys,
       disk,
-      network
+      network,
+      hagroup,
+      hastate
     ]
   }
 
@@ -102,17 +113,3 @@ resource "proxmox_vm_qemu" "k3s-master" {
   }
 }
 
-data "external" "kubeconfig" {
-  depends_on = [
-    proxmox_vm_qemu.k3s-support,
-    proxmox_vm_qemu.k3s-master
-  ]
-
-  program = [
-    "/usr/bin/ssh",
-    "-o UserKnownHostsFile=/dev/null",
-    "-o StrictHostKeyChecking=no",
-    "${local.master_node_settings.user}@${local.master_node_ips[0]}",
-    "echo '{\"kubeconfig\":\"'$(sudo cat /etc/rancher/k3s/k3s.yaml | base64)'\"}'"
-  ]
-}

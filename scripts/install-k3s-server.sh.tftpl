@@ -1,3 +1,7 @@
+#!/bin/bash
+
+export DEBIAN_FRONTEND=noninteractive
+
 export HTTP_PROXY="${http_proxy}"
 export HTTPS_PROXY="${http_proxy}"
 export http_proxy="${http_proxy}"
@@ -23,3 +27,5 @@ curl -sfL https://get.k3s.io | sh -s - ${mode} \
 --datastore-endpoint="mysql://${db.user}:${db.password}@tcp(${db.host})/${db.name}" \
 %{ endfor ~}
 --log $HOME/.k3s-install-log.txt
+
+sudo -E apt install jq -y

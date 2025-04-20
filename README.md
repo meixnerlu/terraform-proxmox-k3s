@@ -1,24 +1,14 @@
 # terraform-proxmox-k3s
 
-IGNORE THE 0.1.* VERSIONS!!!
+!!! IGNORE THE 0.1.X VERSIONS !!!
 
 A module for spinning up an expandable and flexible K3s server for your HomeLab.
+I just forked this to get it running on my proxmox version (8.3.5)
+I removed the original docs because I didnt test them.
+I also removed the kube-config output since it didnt work in my Gitlab CI.
+I dont know much about terraform modules so if you have PRs you can create them and I will have a look.
 
-## Features
-
-- Fully automated. No need to remote into a VM; even for a kubeconfig
-- Built in and automatically configured external loadbalancer (both K3s API and ingress)
-- Static(ish) MAC addresses for reproducible DHCP reservations
-- Node pools to easily scale and to handle many kinds of workloads
-- Pure Terraform - no Ansible needed.
-
-## Prerequisites
-
-- A Proxmox node with sufficient capacity for all nodes
-- A cloneable or template VM with a size that does not exceed the smallest node size (10G currently) that supports Cloud-init and is based on Debian
-  (ideally ubuntu server)
-- 2 cidr ranges for master and worker nodes NOT handed out by DHCP (nodes are
-  configured with static IPs from these ranges)
+I posted the module to terraforms and opentofus registries.
 
 ## Usage
 
@@ -26,88 +16,67 @@ A module for spinning up an expandable and flexible K3s server for your HomeLab.
 [Official Registry Page](https://search.opentofu.org/module/meixnerlu/k3s/proxmox/latest).
 
 ```terraform
+terraform {
+  required_providers {
+    proxmox = {
+      source = "telmate/proxmox"
+      version = "3.0.1-rc8"
+    }
+    macaddress = {
+      source = "ivoronin/macaddress"
+      version = "0.3.0"
+    }
+  }
+  backend "http" {
+  }
+}
+
+provider "proxmox" {
+  ...
+}
+
 module "k3s" {
   source  = "meixnerlu/k3s/proxmox"
-  version = ">= 0.0.0, < 1.0.0" # Get latest 0.X release
+  version = "v0.2.2"
 
-  authorized_keys_file = "authorized_keys"
+  authorized_keys_file = "path to a pub key"
+  private_key = "path to a priv key" # of course they need to be a pair
 
-  proxmox_node = "my-proxmox-node"
+  proxmox_node = ["your proxmox node"]
+  # proxmox_node = ["node1", "node2", "node3"] for clusters
 
-  node_template = "ubuntu-template"
-  proxmox_resource_pool = "my-k3s"
+  node_template = "debian-12-template" # I used a debian12 cloud image with qemu-guest-agent and nfs-common installed
+  proxmox_resource_pool = "k3s"
 
-  network_gateway = "192.168.0.1"
-  lan_subnet = "192.168.0.0/24"
+  network_gateway = "10.0.0.1"
+  lan_subnet = "10.0.0.0/20"
 
   support_node_settings = {
     cores = 2
     memory = 4096
+    storage_id = "local-lvm"
+    disk_size = "64G"
   }
-
-  # Disable default traefik and servicelb installs for metallb and traefik 2
-  k3s_disable_components = [
-    "traefik",
-    "servicelb"
-  ]
 
   master_nodes_count = 2
   master_node_settings = {
     cores = 2
     memory = 4096
+    storage_id = "local-lvm"
+    disk_size = "64G"
   }
 
-  # 192.168.0.200 -> 192.168.0.207 (6 available IPs for nodes)
-  control_plane_subnet = "192.168.0.200/29"
+  control_plane_subnet = "10.0.0.160/28"
 
   node_pools = [
     {
       name = "default"
-      size = 2
-      # 192.168.0.208 -> 192.168.0.223 (14 available IPs for nodes)
-      subnet = "192.168.0.208/28"
+      size = 3
+      subnet = "10.0.0.176/28"
+      storage_id = "local-lvm"
+      storage_type = "disk"
+      disk_size = "64G"
     }
   ]
 }
 ```
-
-### Retrieve Kubeconfig
-
-To get the kubeconfig for your new K3s first make sure to forward the module
-output in your project's output:
-
-```terraform
-output "kubeconfig" {
-  # Update module name. Here we are using 'k3s'
-  value = module.k3s.k3s_kubeconfig
-  sensitive = true
-}
-```
-
-Finally output the config file:
-
-```sh
-terraform output -raw kubeconfig > config.yaml
-# Test out the config:
-kubectl --kubeconfig config.yaml get nodes
-```
-
-> Make sure your support node is routable from the computer you are running the
-command on!
-
-## Runbooks and Documents
-
-- [Basic cluster example](example)
-- [How to roll (update) your nodes](docs/roll-node-pools.md)
-
-## Why use nodepools and subnets?
-
-This module is designed with nodepools and subnets to allow for changes to the
-cluster composition in the future. If later on, you want to add another master
-or worker node, you can do so without needing to teardown/modify existing
-nodes. Nodepools are key if you plan to support nodes with different nodepool
-capabilities in the future without impacting other nodes.
-
-## Todo
-
-- [ ] Add variable to allow workloads on master nodes

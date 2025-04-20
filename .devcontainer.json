@@ -1,0 +1,13 @@
+{
+  "name": "Terraform Dev Container",
+  "image": "hashicorp/terraform:latest",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "hashicorp.terraform"
+      ]
+    }
+  },
+  "postCreateCommand": "terraform --version",
+  "remoteUser": "root"
+}
