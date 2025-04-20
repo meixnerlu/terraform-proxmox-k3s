@@ -4,7 +4,7 @@ resource "macaddress" "k3s-masters" {
 
 locals {
   master_node_settings = var.master_node_settings
-  master_node_ips = [for i in range(var.master_nodes_count) : cidrhost(var.control_plane_subnet, i + 1)]
+  master_node_ips      = [for i in range(var.master_nodes_count) : cidrhost(var.control_plane_subnet, i + 1)]
 }
 
 resource "random_password" "k3s-server-token" {
@@ -30,7 +30,7 @@ resource "proxmox_vm_qemu" "k3s-master" {
   sockets = local.master_node_settings.sockets
   memory  = local.master_node_settings.memory
 
-  agent = 1
+  agent  = 1
   onboot = var.onboot
 
   disk {
@@ -99,7 +99,7 @@ resource "proxmox_vm_qemu" "k3s-master" {
         server_hosts = []
         node_taints  = ["CriticalAddonsOnly=true:NoExecute"]
         disable      = var.k3s_disable_components
-        datastores   = [
+        datastores = [
           {
             host     = "${local.support_node_ip}:3306"
             name     = "k3s"
@@ -113,3 +113,18 @@ resource "proxmox_vm_qemu" "k3s-master" {
   }
 }
 
+data "remote_file" "kubeconfig" {
+  depends_on = [
+    proxmox_vm_qemu.k3s-support,
+    proxmox_vm_qemu.k3s-master
+  ]
+
+  conn {
+    user        = local.master_node_settings.user
+    host        = local.master_node_ips[0]
+    private_key = file(var.private_key)
+    sudo        = true
+  }
+
+  path = "/etc/rancher/k3s/k3s.yaml"
+}

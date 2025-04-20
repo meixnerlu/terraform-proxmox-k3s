@@ -56,7 +56,7 @@ resource "proxmox_vm_qemu" "k3s-worker" {
   sockets = each.value.sockets
   memory  = each.value.memory
 
-  agent = 1
+  agent  = 1
   onboot = var.onboot
 
   disk {
@@ -128,7 +128,7 @@ resource "proxmox_vm_qemu" "k3s-worker" {
         node_taints  = each.value.taints
         datastores   = []
 
-        http_proxy  = var.http_proxy
+        http_proxy = var.http_proxy
       })
     ]
   }

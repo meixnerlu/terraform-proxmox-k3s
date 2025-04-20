@@ -3,7 +3,7 @@ resource "macaddress" "k3s-support" {}
 
 locals {
   support_node_settings = var.support_node_settings
-  support_node_ip = cidrhost(var.control_plane_subnet, 0)
+  support_node_ip       = cidrhost(var.control_plane_subnet, 0)
 }
 
 locals {
@@ -22,7 +22,7 @@ resource "proxmox_vm_qemu" "k3s-support" {
   sockets = local.support_node_settings.sockets
   memory  = local.support_node_settings.memory
 
-  agent = 1
+  agent  = 1
   onboot = var.onboot
 
   disk {
@@ -77,9 +77,9 @@ resource "proxmox_vm_qemu" "k3s-support" {
   nameserver = var.nameserver
 
   connection {
-    type = "ssh"
-    user = local.support_node_settings.user
-    host = local.support_node_ip
+    type        = "ssh"
+    user        = local.support_node_settings.user
+    host        = local.support_node_ip
     private_key = file("${var.private_key}")
   }
 
@@ -92,7 +92,7 @@ resource "proxmox_vm_qemu" "k3s-support" {
       k3s_user     = local.support_node_settings.db_user
       k3s_password = random_password.k3s-master-db-password.result
 
-      http_proxy  = var.http_proxy
+      http_proxy = var.http_proxy
     })
   }
 
@@ -128,9 +128,9 @@ resource "null_resource" "k3s_nginx_config" {
   }
 
   connection {
-    type = "ssh"
-    user = local.support_node_settings.user
-    host = local.support_node_ip
+    type        = "ssh"
+    user        = local.support_node_settings.user
+    host        = local.support_node_ip
     private_key = file("${var.private_key}")
   }
 
