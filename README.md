@@ -1,12 +1,10 @@
 # terraform-proxmox-k3s
 
-!!! IGNORE THE 0.1.X VERSIONS !!!
+!!! Do not use releases marked as pre-release !!!
 
 A module for spinning up an expandable and flexible K3s server for your HomeLab.
 I just forked this to get it running on my proxmox version (8.3.5)
 I removed the original docs because I didnt test them.
-I also removed the kube-config output since it didnt work in my Gitlab CI.
-I dont know much about terraform modules so if you have PRs you can create them and I will have a look.
 
 I posted the module to terraforms and opentofus registries.
 
@@ -26,8 +24,10 @@ terraform {
       source = "ivoronin/macaddress"
       version = "0.3.0"
     }
-  }
-  backend "http" {
+    remote = {
+      source  = "tenstad/remote"
+      version = "0.1.3"
+    }
   }
 }
 
@@ -37,7 +37,7 @@ provider "proxmox" {
 
 module "k3s" {
   source  = "meixnerlu/k3s/proxmox"
-  version = "v0.2.2"
+  version = "v0.2.4"
 
   authorized_keys_file = "path to a pub key"
   private_key = "path to a priv key" # of course they need to be a pair
@@ -78,5 +78,10 @@ module "k3s" {
       disk_size = "64G"
     }
   ]
+}
+
+output "kubeconfig" {
+  value     = module.k3s.k3s_kubeconfig
+  sensitive = true
 }
 ```
